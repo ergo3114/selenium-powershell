@@ -54,7 +54,11 @@ function Start-SeFirefox {
 }
 
 function Stop-SeDriver {
-    param($Driver) 
+    [cmdletbinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        $Driver
+    ) 
 
     $Driver.Dispose()
 }
