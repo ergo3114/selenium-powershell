@@ -1,6 +1,6 @@
 Import-Module $PSScriptRoot\..\Selenium -Force
 
-Describe "Get-SeCookie" {
+Describe "Selenium Tests" {
     BeforeAll {
         $ffdriver = Start-SeFirefox
         $chromedriver = Start-SeChrome -Arguments "headless"
@@ -11,8 +11,8 @@ Describe "Get-SeCookie" {
         Stop-SeDriver -Driver $chromedriver
     }
 
-    Context "FireFox" {
-        It "Should get cookies from <URL>" -TestCases @(
+    Context "Get-SeCookie" {
+        It "Should get cookies from <URL> in FireFox" -TestCases @(
             @{URL = "https://www.nasa.gov/"}
             #@{URL = "https://github.com/"}
             @{URL = "https://www.netflix.com/"}
@@ -22,10 +22,8 @@ Describe "Get-SeCookie" {
             Enter-SeUrl -Driver $ffdriver -Url $URL
             Get-SeCookie $ffdriver
         }
-    }
 
-    Context "Chrome" {
-        It "Should get cookies from <URL>" -TestCases @(
+        It "Should get cookies from <URL> in Chrome" -TestCases @(
             @{URL = "https://www.nasa.gov/"}
             @{URL = "https://github.com/"}
             @{URL = "https://www.netflix.com/"}
