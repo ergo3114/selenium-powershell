@@ -1,15 +1,39 @@
-[System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\assemblies\WebDriver.dll")
-[System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\assemblies\WebDriver.Support.dll")
+<#
+.SYNOPSIS
+    Starts a Chrome selenium session.
+.DESCRIPTION
+    Creates a driver to be used by later selenium-powershell functions.
+.EXAMPLE
+    PS C:\> $driver = Start-SeChrome
+    Starts a Chrome session to be used by the selenium-powershell functions.
+    Saving to a variable assists in usability of other functions later.
+.EXAMPLE
+    PS C:\> $driver = Start-SeChrome -Arguments "headless", "incognito"
+    Starts a Chrome session that is headless and in incognito mode.
+    Headless means that there will be no browser window displayed.
+    Incognito mode means that no cookies or profile will be save during execution of browser.
+    Saving to a variable assists in usability of other functions later.
+.INPUTS
+    Array of arguments
+.OUTPUTS
+    OpenQA.Selenium.Chrome.ChromeDriver
+.NOTES
+    More information about the arguments can be found here: https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html
+#>
 function Start-SeChrome {
+    [cmdletbinding()]
     Param(
+        # An array of arguments to be used when starting Chrome; i.e. headless, incognito
         [Parameter(Mandatory = $false)]
         [array]$Arguments
     )
-    if($Arguments) {
-        $Chrome_Options = New-Object -TypeName "OpenQA.Selenium.Chrome.ChromeOptions"
-        $Chrome_Options.AddArguments($Arguments)
+    PROCESS{
+        if($Arguments) {
+            $Chrome_Options = New-Object -TypeName "OpenQA.Selenium.Chrome.ChromeOptions"
+            $Chrome_Options.AddArguments($Arguments)
+        }
+        New-Object -TypeName "OpenQA.Selenium.Chrome.ChromeDriver" -ArgumentList $Chrome_Options
     }
-    New-Object -TypeName "OpenQA.Selenium.Chrome.ChromeDriver" -ArgumentList $Chrome_Options
 }
 
 function Start-SeFirefox {
@@ -27,7 +51,6 @@ function Start-SeFirefox {
         $Driver.Manage().Timeouts().ImplicitWait = [TimeSpan]::FromSeconds(10)
         $Driver
     }
-    
 }
 
 function Stop-SeDriver {
@@ -63,13 +86,13 @@ function Find-SeElement {
 
     Process {
 
-        if ($Driver -ne $null -and $Element -ne $null) {
+        if ($null -ne $Driver -and $null -ne $Element) {
             throw "Driver and Element may not be specified together."
         }
-        elseif ($Driver -ne $Null) {
+        elseif ($null -ne $Driver) {
             $Target = $Driver
         }
-        elseif ($Element -ne $Null) {
+        elseif ($null -ne $Element) {
             $Target = $Element
         }
         else {
@@ -117,8 +140,6 @@ function Invoke-SeClick {
     } else {
         $Element.Click()
     }
-
-    
 }
 
 function Send-SeKeys {
